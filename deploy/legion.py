@@ -30,7 +30,7 @@ def cold(branch='openmp'):
                 run('git checkout '+branch)
                 run('cmake .. ')
                 run('make')
-                run('tests')
+                run('./tests')
 
 @task
 def warm(branch='openmp'):
@@ -40,7 +40,7 @@ def warm(branch='openmp'):
         run('git pull')
         run('cmake ..')
         run('make')
-        run('tests')
+        run('./tests')
 
 @task
 def patch():
@@ -53,7 +53,7 @@ def patch():
         with cd('build'):
             run('cmake ..')
             run('make')
-            run('tests')
+            run('./tests')
 
 @task
 def sub(processes=4):
