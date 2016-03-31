@@ -40,8 +40,8 @@ namespace GameOfLifeNS {
         int m_sizex;
         int m_sizey;
         int m_frame;
-        std::vector<std::vector<STATE> > m_grid;
-        std::vector<std::vector<STATE> > *m_gridP;
+        std::vector<std::vector<STATE>> m_grid;
+        std::vector<std::vector<STATE>> *m_gridP;
 
     };
 

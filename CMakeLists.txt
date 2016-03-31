@@ -15,9 +15,11 @@ include_directories(lib)
 
 add_library(gameoflife_library ${SOURCE_FILES})
 
-add_subdirectory(tests)
-
 add_executable(GameOfLife src/main.cpp)
 target_link_libraries(GameOfLife gameoflife_library)
+
+add_executable(tests tests/tests.cpp)
+target_link_libraries(tests gameoflife_library)
+
 
 install (TARGETS GameOfLife DESTINATION ${PROJECT_SOURCE_DIR}/bin)
