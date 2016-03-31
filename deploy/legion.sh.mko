@@ -1,0 +1,9 @@
+#!/bin/bash -l
+#$ -S /bin/bash
+#$ -l h_rt=0:0:30
+#$ -N OMP_GameOfLife
+#$ -pe smp ${processes}
+#$ -wd ${run_at}
+module unload compilers
+module load compilers/gnu/4.9.2
+time ${deploy_to}/GameOfLife/build/src/omp_GameOfLife

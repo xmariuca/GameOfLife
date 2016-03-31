@@ -2,6 +2,10 @@
 #include "defs.h"
 #include "GameOfLife.h"
 #include <fstream>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 
 
 using namespace GameOfLifeNS;
