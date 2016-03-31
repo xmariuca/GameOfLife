@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.9)
 project(GameOfLife)
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-endif()
+#if(NOT CMAKE_BUILD_TYPE)
+#    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+#endif()
 
 find_package(OpenMP)
 
