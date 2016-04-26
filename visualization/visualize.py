@@ -13,7 +13,7 @@ def plot(frames,outpath):
     anim = matplotlib.animation.FuncAnimation(figure, _animate, frames.shape[0], interval=100)
     anim.save(outpath)
 
-with open('/Users/ucaHome/ClionProjects/GameOfLife/build/output.txt') as f:
+with open('/Users/ucaHome/ClionProjects/GameOfLife/results/legion.rc.ucl.ac.uk/output.txt') as f:
     rows, cols = [int(x) for x in f.readline().split()]
     dataArr = []
     for line in f:

@@ -2,15 +2,24 @@
 #include "defs.h"
 #include "GameOfLife.h"
 #include <fstream>
+#include <ctime>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 
-
 using namespace GameOfLifeNS;
 
 int main() {
+    double timeO;
+    clock_t timeC;
+    double finalTime;
+#ifdef _OPENMP
+    timeO = omp_get_wtime();
+#else
+    timeC = clock();
+#endif
     std::cout << "***Start!\n";
     std::ofstream outStream("output.txt");
     if (outStream.is_open()) {
@@ -29,6 +38,14 @@ int main() {
         std::cout << "Couldn't open the output file.\n";
     }
     outStream.close();
+
+#ifdef _OPENMP
+    finalTime = omp_get_wtime() - timeO;
+#else
+    finalTime = double(clock() - timeC)
+                / CLOCKS_PER_SEC;
+#endif
+    printf("time %f sec\n", finalTime);
 
     std::cout << "***Magic!\n";
     return SUCCESS;

@@ -5,3 +5,4 @@ bin/*
 visualization/*.avi
 deploy/legion.sh
 /results
+deploy/*.pyc

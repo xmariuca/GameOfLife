@@ -35,11 +35,16 @@ namespace GameOfLifeNS {
 
     void GameOfLife::updateGrid() {
         std::vector<std::vector<STATE>> tempGrid(m_sizex, std::vector<STATE>(m_sizey));
-        for (int ix = 0; ix < m_sizex; ix++) {
-            for (int iy = 0; iy < m_sizey; iy++) {
-                tempGrid[ix][iy] = evaluateCell(ix, iy);
+#pragma omp parallel shared(tempGrid)
+        {
+#pragma omp for collapse(2)
+            for (int ix = 0; ix < m_sizex; ix++) {
+                for (int iy = 0; iy < m_sizey; iy++) {
+                    tempGrid[ix][iy] = evaluateCell(ix, iy);
+                }
             }
         }
+        // omp implicit barrier that waits for all threads to finish their jobs
         // swap grids
         std::vector<std::vector<STATE>> aux(tempGrid);
         tempGrid = m_grid;
@@ -56,7 +61,6 @@ namespace GameOfLifeNS {
                 else m_grid[ix][iy] = DEAD;
             }
         }
-
     }
 
     STATE GameOfLife::evaluateCell(int x, int y) {
@@ -77,6 +81,7 @@ namespace GameOfLifeNS {
 
     int GameOfLife::getAliveNeighbours(int x, int y) {
         int total = 0;
+        // TODO: omp reduction?
         for (int ix = x - 1; ix <= x + 1; ix++) {
             for (int iy = y - 1; iy <= y + 1; iy++) {
                 // only evaluate the valid neighbours
@@ -93,9 +98,14 @@ namespace GameOfLifeNS {
     }
 
     void GameOfLife::seedRandom() {
-        for (int ix = 0; ix < m_sizex; ix++) {
-            for (int iy = 0; iy < m_sizey; iy++) {
-                m_grid[ix][iy] = std::rand() % 2;
+#pragma omp parallel shared(m_grid)
+        {
+#pragma omp for collapse(2)
+            for (int ix = 0; ix < m_sizex; ix++) {
+                for (int iy = 0; iy < m_sizey; iy++) {
+                    m_grid[ix][iy] = std::rand() % 2;
+                }
+
             }
         }
     }

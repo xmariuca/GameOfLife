@@ -45,11 +45,11 @@ def warm(branch='openmp'):
 @task
 def patch():
   with cd(env.deploy_to+'/GameOfLife'):
-    local('git diff > patch.diff')
-    put('patch.diff','patch.diff')
+    local('git diff > lpatch.diff')
+    put('lpatch.diff','rpatch.diff')
     with modules:
         run('git checkout .')
-        run('git apply patch.diff')
+        run('git apply rpatch.diff')
         with cd('build'):
             run('cmake ..')
             run('make')
