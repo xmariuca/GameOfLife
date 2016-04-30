@@ -2,8 +2,8 @@
 build/*
 bin/*
 .DS_Store
-visualization/*.avi
 deploy/legion.sh
 /results
 deploy/*.pyc
 *.pyc
+lpatch.diff
