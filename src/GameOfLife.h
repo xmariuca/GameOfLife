@@ -8,6 +8,10 @@
 #include <vector>
 #include <string>
 #include "defs.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 
 namespace GameOfLifeNS {
     class GameOfLife {

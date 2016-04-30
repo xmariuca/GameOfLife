@@ -10,7 +10,7 @@ namespace GameOfLifeNS {
     GameOfLife::GameOfLife(int sizex, int sizey) :
             m_sizex(sizex),
             m_sizey(sizey),
-            m_grid(sizex, std::vector<STATE>(sizey)),
+            m_grid(sizex, std::vector<STATE>(sizey, 0)),
             m_gridP(&m_grid),
             m_frame(0) { }
 
@@ -35,15 +35,23 @@ namespace GameOfLifeNS {
 
     void GameOfLife::updateGrid() {
         std::vector<std::vector<STATE>> tempGrid(m_sizex, std::vector<STATE>(m_sizey));
-#pragma omp parallel shared(tempGrid)
-        {
-#pragma omp for collapse(2)
+#pragma omp parallel for collapse(2)
             for (int ix = 0; ix < m_sizex; ix++) {
                 for (int iy = 0; iy < m_sizey; iy++) {
                     tempGrid[ix][iy] = evaluateCell(ix, iy);
                 }
             }
-        }
+        ////            if (m_frame == 1) {
+//#ifdef _OPENMP
+//#pragma omp single
+//                {
+//                int numThreads = omp_get_num_threads();
+//                std::cout << "Number of threads:" << numThreads << std::endl;
+//                }
+//#endif
+//            }
+//#pragma omp for collapse(2)
+        //collapse(2)
         // omp implicit barrier that waits for all threads to finish their jobs
         // swap grids
         std::vector<std::vector<STATE>> aux(tempGrid);
@@ -61,6 +69,8 @@ namespace GameOfLifeNS {
                 else m_grid[ix][iy] = DEAD;
             }
         }
+        // update the frame number
+        m_frame++;
     }
 
     STATE GameOfLife::evaluateCell(int x, int y) {
@@ -98,16 +108,25 @@ namespace GameOfLifeNS {
     }
 
     void GameOfLife::seedRandom() {
-#pragma omp parallel shared(m_grid)
-        {
-#pragma omp for collapse(2)
-            for (int ix = 0; ix < m_sizex; ix++) {
-                for (int iy = 0; iy < m_sizey; iy++) {
-                    m_grid[ix][iy] = std::rand() % 2;
-                }
-
+//        int numThreads = 0;
+//#pragma omp parallel shared(m_grid), shared(numThreads)
+//        {
+//#ifdef _OPENMP
+//            #pragma omp single
+//            {
+//            numThreads = omp_get_num_threads();
+//            std::cout << "Number of threads:" << numThreads << std::endl;
+//            }
+//#endif
+//#pragma omp for collapse(2)
+        for (int ix = 0; ix < m_sizex; ix++) {
+            for (int iy = 0; iy < m_sizey; iy++) {
+                m_grid[ix][iy] = std::rand() % 2;
             }
+
         }
+//        }
+        m_frame++;
     }
 
 

@@ -7,7 +7,7 @@ import os
 
 env.user='ucabmrr'
 
-env.run_at="/home/"+env.user+"/Scratch/GameOfLife/omp-output"
+env.run_at="/home/"+env.user+"/Scratch/"+env.user+"/GameOfLife/omp-output"
 env.deploy_to="/home/"+env.user+"/devel/omp-gameoflife"
 env.clone_url="git@github.com:xmariuca/GameOfLife.git"
 env.hosts=['legion.rc.ucl.ac.uk']
@@ -56,7 +56,7 @@ def patch():
             run('./tests')
 
 @task
-def sub(processes=4):
+def sub(processes=12):
     env.processes=processes
     template_file_path=os.path.join(os.path.dirname(__file__),'legion.sh.mko')
     script_local_path=os.path.join(os.path.dirname(__file__),'legion.sh')
@@ -65,8 +65,14 @@ def sub(processes=4):
         with open(script_local_path,'w') as script_file:
             script_file.write(script)
     with cd(env.deploy_to):
-        put(script_local_path,'example.sh')
-        run('qsub example.sh')
+        put(script_local_path,'submit.sh')
+        run('qsub submit.sh')
+
+@task
+def sub_graph():
+    for coreNo in xrange(1,15,3):
+        print(coreNo)
+        sub(coreNo)
 
 @task
 def stat():

@@ -6,7 +6,38 @@
 #include "catch.hpp"
 #include "GameOfLife.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace GameOfLifeNS;
+
+TEST_CASE("OpenMP parallelisaiton works", "[openmp]") {
+    GameOfLife gof(5, 5);
+    gof.seedBlinker();
+
+    int thread_count = 25;
+    int sum = 0;
+    STATE stateCell = DEAD;
+
+#pragma omp parallel reduction(+:sum)
+    {
+#ifdef _OPENMP
+#pragma omp single
+        {
+        int numThreads = omp_get_num_threads();
+        std::cout << "Number of threads:" << numThreads << std::endl;
+        }
+#endif
+#pragma omp for collapse(2)
+        for (int ix = 0; ix < gof.getWidth(); ix++) {
+            for (int iy = 0; iy < gof.getHeight(); iy++) {
+                sum = sum + gof.evaluateCell(ix, iy);
+            }
+        }
+    }
+    REQUIRE (sum == 3);
+}
 
 TEST_CASE("GameOfLife can be constructed", "[GoL-init]") {
 
@@ -32,11 +63,11 @@ TEST_CASE("Test GameOfLife methods", "[GoL-methods]") {
     gof.seedBlinker();
 
     SECTION("Test seedBlinker") {
-        REQUIRE( gof.getGrid()[2][2] == ALIVE);
-        REQUIRE( gof.getGrid()[1][2] == DEAD);
-        REQUIRE( gof.getGrid()[3][2] == DEAD);
-        REQUIRE( gof.getGrid()[2][1] == ALIVE);
-        REQUIRE( gof.getGrid()[2][3] == ALIVE);
+        REQUIRE(gof.getGrid()[2][2] == ALIVE);
+        REQUIRE(gof.getGrid()[1][2] == DEAD);
+        REQUIRE(gof.getGrid()[3][2] == DEAD);
+        REQUIRE(gof.getGrid()[2][1] == ALIVE);
+        REQUIRE(gof.getGrid()[2][3] == ALIVE);
     }
 
     SECTION("Test getAliveNeighbours") {
@@ -49,21 +80,21 @@ TEST_CASE("Test GameOfLife methods", "[GoL-methods]") {
 
     SECTION("Test evaluateCell") {
 //        INFO(gof.evaluateCell(2,2));
-        REQUIRE( gof.evaluateCell(2,2) == ALIVE);
-        REQUIRE( gof.evaluateCell(2,1) == DEAD);
-        REQUIRE( gof.evaluateCell(2,3) == DEAD);
-        REQUIRE( gof.evaluateCell(4,4) == DEAD);
+        REQUIRE(gof.evaluateCell(2, 2) == ALIVE);
+        REQUIRE(gof.evaluateCell(2, 1) == DEAD);
+        REQUIRE(gof.evaluateCell(2, 3) == DEAD);
+        REQUIRE(gof.evaluateCell(4, 4) == DEAD);
     }
 
     SECTION("Test upgradeGrid") {
-        REQUIRE( gof.getFrame() == 0);
+        REQUIRE(gof.getFrame() == 1);
         gof.updateGrid();
-        REQUIRE( gof.getGrid()[2][2] == ALIVE);
-        REQUIRE( gof.getGrid()[1][2] == ALIVE);
-        REQUIRE( gof.getGrid()[3][2] == ALIVE);
-        REQUIRE( gof.getGrid()[2][1] == DEAD);
-        REQUIRE( gof.getGrid()[2][3] == DEAD);
-        REQUIRE( gof.getFrame() == 1);
+        REQUIRE(gof.getGrid()[2][2] == ALIVE);
+        REQUIRE(gof.getGrid()[1][2] == ALIVE);
+        REQUIRE(gof.getGrid()[3][2] == ALIVE);
+        REQUIRE(gof.getGrid()[2][1] == DEAD);
+        REQUIRE(gof.getGrid()[2][3] == DEAD);
+        REQUIRE(gof.getFrame() == 2);
     }
 
 }
